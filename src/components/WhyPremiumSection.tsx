@@ -1,4 +1,26 @@
+import { useEffect, useRef, useState } from "react";
+
 const WhyPremiumSection = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   const features = [
     {
       icon: "✓",
@@ -33,12 +55,12 @@ const WhyPremiumSection = () => {
   ];
 
   return (
-    <section className="section-padding bg-secondary/30">
+    <section ref={sectionRef} className="section-padding bg-secondary/30 overflow-hidden">
       <div className="container-premium">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
-          <div className="text-center space-y-4 mb-12 animate-fade-up">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-gold/20 text-sm font-medium text-primary">
+          <div className={`text-center space-y-4 mb-12 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <span className="inline-block px-4 py-1.5 rounded-full bg-gold/20 text-sm font-medium text-primary hover-scale cursor-default">
               কেন আমাদের মসলা?
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
@@ -54,16 +76,22 @@ const WhyPremiumSection = () => {
             {features.map((feature, index) => (
               <div 
                 key={index}
-                className="flex gap-4 p-5 rounded-xl bg-card border border-border hover:shadow-soft transition-shadow animate-fade-up"
-                style={{ animationDelay: `${index * 100}ms` }}
+                className={`group flex gap-4 p-5 rounded-xl bg-card border border-border hover:border-gold hover:shadow-card transition-all duration-500 hover-lift cursor-default ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+                style={{ 
+                  transitionDelay: `${index * 100}ms`,
+                  animationDelay: `${index * 100}ms` 
+                }}
               >
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 group-hover:shadow-gold">
                   <span className="text-primary-foreground font-bold">{feature.icon}</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">{feature.title}</h3>
+                  <p className="text-sm text-muted-foreground group-hover:text-foreground/80 transition-colors">{feature.description}</p>
                 </div>
+                
+                {/* Progress bar animation */}
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gold/0 group-hover:bg-gold/50 transition-all duration-700 origin-left scale-x-0 group-hover:scale-x-100 rounded-b-xl" />
               </div>
             ))}
           </div>
