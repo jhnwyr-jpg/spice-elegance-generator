@@ -264,11 +264,11 @@ const Settings = () => {
   const getRoleBadge = (role: string) => {
     switch (role) {
       case "owner":
-        return <Badge className="bg-purple-500/20 text-purple-400">Owner</Badge>;
+        return <Badge className="bg-amber-100 text-amber-700 border-amber-200">Owner</Badge>;
       case "admin":
-        return <Badge className="bg-blue-500/20 text-blue-400">Admin</Badge>;
+        return <Badge className="bg-blue-100 text-blue-700 border-blue-200">Admin</Badge>;
       case "staff":
-        return <Badge className="bg-green-500/20 text-green-400">Staff</Badge>;
+        return <Badge className="bg-green-100 text-green-700 border-green-200">Staff</Badge>;
       default:
         return <Badge>{role}</Badge>;
     }
@@ -286,21 +286,21 @@ const Settings = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold text-white">সেটিংস</h1>
-        <p className="text-slate-400 mt-1">অ্যাপ্লিকেশন সেটিংস ম্যানেজ করুন</p>
+        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">সেটিংস</h1>
+        <p className="text-slate-500 mt-1">অ্যাপ্লিকেশন সেটিংস ম্যানেজ করুন</p>
       </div>
 
       <Tabs defaultValue="delivery" className="space-y-6">
-        <TabsList className="bg-slate-800 border border-slate-700">
-          <TabsTrigger value="delivery" className="data-[state=active]:bg-primary">
+        <TabsList className="bg-slate-100 border border-slate-200">
+          <TabsTrigger value="delivery" className="data-[state=active]:bg-primary data-[state=active]:text-white">
             <Truck className="w-4 h-4 mr-2" />
             ডেলিভারি
           </TabsTrigger>
-          <TabsTrigger value="store" className="data-[state=active]:bg-primary">
+          <TabsTrigger value="store" className="data-[state=active]:bg-primary data-[state=active]:text-white">
             <Store className="w-4 h-4 mr-2" />
             স্টোর
           </TabsTrigger>
-          <TabsTrigger value="users" className="data-[state=active]:bg-primary">
+          <TabsTrigger value="users" className="data-[state=active]:bg-primary data-[state=active]:text-white">
             <Users className="w-4 h-4 mr-2" />
             অ্যাডমিন
           </TabsTrigger>
@@ -308,20 +308,20 @@ const Settings = () => {
 
         {/* Delivery Settings */}
         <TabsContent value="delivery">
-          <Card className="bg-slate-800/50 border-slate-700">
+          <Card className="bg-white border-slate-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
+              <CardTitle className="text-slate-800 flex items-center gap-2">
                 <Truck className="w-5 h-5" />
                 ডেলিভারি চার্জ
               </CardTitle>
-              <CardDescription className="text-slate-400">
+              <CardDescription className="text-slate-500">
                 ডেলিভারি চার্জ কনফিগার করুন
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-slate-300">ঢাকার ভিতরে (৳)</Label>
+                  <Label className="text-slate-700">ঢাকার ভিতরে (৳)</Label>
                   <Input
                     type="number"
                     value={deliveryCharges.dhaka}
@@ -331,11 +331,11 @@ const Settings = () => {
                         dhaka: parseInt(e.target.value) || 0,
                       })
                     }
-                    className="bg-slate-700 border-slate-600 text-white"
+                    className="bg-slate-50 border-slate-200 text-slate-800"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-slate-300">ঢাকার বাইরে (৳)</Label>
+                  <Label className="text-slate-700">ঢাকার বাইরে (৳)</Label>
                   <Input
                     type="number"
                     value={deliveryCharges.outside_dhaka}
@@ -345,14 +345,14 @@ const Settings = () => {
                         outside_dhaka: parseInt(e.target.value) || 0,
                       })
                     }
-                    className="bg-slate-700 border-slate-600 text-white"
+                    className="bg-slate-50 border-slate-200 text-slate-800"
                   />
                 </div>
               </div>
               <Button
                 onClick={saveDeliveryCharges}
                 disabled={isSaving}
-                className="bg-gradient-to-r from-primary to-primary/80"
+                className="bg-gradient-to-r from-primary to-primary/80 shadow-lg shadow-primary/20"
               >
                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                 সেভ করুন
@@ -363,56 +363,56 @@ const Settings = () => {
 
         {/* Store Settings */}
         <TabsContent value="store">
-          <Card className="bg-slate-800/50 border-slate-700">
+          <Card className="bg-white border-slate-200 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
+              <CardTitle className="text-slate-800 flex items-center gap-2">
                 <Store className="w-5 h-5" />
                 স্টোর তথ্য
               </CardTitle>
-              <CardDescription className="text-slate-400">
+              <CardDescription className="text-slate-500">
                 আপনার স্টোরের বেসিক তথ্য
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-slate-300">স্টোর নাম</Label>
+                  <Label className="text-slate-700">স্টোর নাম</Label>
                   <Input
                     value={storeInfo.name}
                     onChange={(e) => setStoreInfo({ ...storeInfo, name: e.target.value })}
-                    className="bg-slate-700 border-slate-600 text-white"
+                    className="bg-slate-50 border-slate-200 text-slate-800"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-slate-300">ফোন</Label>
+                  <Label className="text-slate-700">ফোন</Label>
                   <Input
                     value={storeInfo.phone}
                     onChange={(e) => setStoreInfo({ ...storeInfo, phone: e.target.value })}
-                    className="bg-slate-700 border-slate-600 text-white"
+                    className="bg-slate-50 border-slate-200 text-slate-800"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-slate-300">ইমেইল</Label>
+                  <Label className="text-slate-700">ইমেইল</Label>
                   <Input
                     type="email"
                     value={storeInfo.email}
                     onChange={(e) => setStoreInfo({ ...storeInfo, email: e.target.value })}
-                    className="bg-slate-700 border-slate-600 text-white"
+                    className="bg-slate-50 border-slate-200 text-slate-800"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-slate-300">ঠিকানা</Label>
+                  <Label className="text-slate-700">ঠিকানা</Label>
                   <Input
                     value={storeInfo.address}
                     onChange={(e) => setStoreInfo({ ...storeInfo, address: e.target.value })}
-                    className="bg-slate-700 border-slate-600 text-white"
+                    className="bg-slate-50 border-slate-200 text-slate-800"
                   />
                 </div>
               </div>
               <Button
                 onClick={saveStoreInfo}
                 disabled={isSaving}
-                className="bg-gradient-to-r from-primary to-primary/80"
+                className="bg-gradient-to-r from-primary to-primary/80 shadow-lg shadow-primary/20"
               >
                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                 সেভ করুন
@@ -423,20 +423,20 @@ const Settings = () => {
 
         {/* Admin Users */}
         <TabsContent value="users">
-          <Card className="bg-slate-800/50 border-slate-700">
+          <Card className="bg-white border-slate-200 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="text-white flex items-center gap-2">
+                <CardTitle className="text-slate-800 flex items-center gap-2">
                   <Shield className="w-5 h-5" />
                   অ্যাডমিন ইউজার
                 </CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardDescription className="text-slate-500">
                   অ্যাডমিন প্যানেল অ্যাক্সেস ম্যানেজ করুন
                 </CardDescription>
               </div>
               <Button
                 size="sm"
-                className="bg-gradient-to-r from-primary to-primary/80"
+                className="bg-gradient-to-r from-primary to-primary/80 shadow-lg shadow-primary/20"
                 onClick={() => {
                   setUserForm({ name: "", email: "", password: "", role: "staff" });
                   setShowAddUser(true);
@@ -448,30 +448,30 @@ const Settings = () => {
             </CardHeader>
             <CardContent>
               {adminUsers.length === 0 ? (
-                <p className="text-slate-400 text-center py-8">কোনো অ্যাডমিন নেই</p>
+                <p className="text-slate-500 text-center py-8">কোনো অ্যাডমিন নেই</p>
               ) : (
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow className="border-slate-700">
-                        <TableHead className="text-slate-400">নাম</TableHead>
-                        <TableHead className="text-slate-400">ইমেইল</TableHead>
-                        <TableHead className="text-slate-400">রোল</TableHead>
-                        <TableHead className="text-slate-400 text-right">অ্যাকশন</TableHead>
+                      <TableRow className="border-slate-200">
+                        <TableHead className="text-slate-500">নাম</TableHead>
+                        <TableHead className="text-slate-500">ইমেইল</TableHead>
+                        <TableHead className="text-slate-500">রোল</TableHead>
+                        <TableHead className="text-slate-500 text-right">অ্যাকশন</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {adminUsers.map((user) => (
-                        <TableRow key={user.id} className="border-slate-700/50">
-                          <TableCell className="text-white font-medium">{user.name}</TableCell>
-                          <TableCell className="text-slate-300">{user.email}</TableCell>
+                        <TableRow key={user.id} className="border-slate-100">
+                          <TableCell className="text-slate-800 font-medium">{user.name}</TableCell>
+                          <TableCell className="text-slate-600">{user.email}</TableCell>
                           <TableCell>{getRoleBadge(user.role)}</TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                className="text-slate-400 hover:text-white"
+                                className="text-slate-500 hover:text-slate-800"
                                 onClick={() => {
                                   setEditingUser(user);
                                   setUserForm({
@@ -487,7 +487,7 @@ const Settings = () => {
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                className="text-red-400 hover:text-red-300"
+                                className="text-red-500 hover:text-red-600"
                                 onClick={() => setDeleteUser(user)}
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -507,49 +507,49 @@ const Settings = () => {
 
       {/* Add User Dialog */}
       <Dialog open={showAddUser} onOpenChange={setShowAddUser}>
-        <DialogContent className="bg-slate-800 border-slate-700 text-white">
+        <DialogContent className="bg-white border-slate-200 text-slate-800">
           <DialogHeader>
-            <DialogTitle>নতুন অ্যাডমিন যোগ করুন</DialogTitle>
+            <DialogTitle className="text-slate-800">নতুন অ্যাডমিন যোগ করুন</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label>নাম *</Label>
+              <Label className="text-slate-700">নাম *</Label>
               <Input
                 value={userForm.name}
                 onChange={(e) => setUserForm({ ...userForm, name: e.target.value })}
-                className="bg-slate-700 border-slate-600"
+                className="bg-slate-50 border-slate-200 text-slate-800"
               />
             </div>
             <div className="space-y-2">
-              <Label>ইমেইল *</Label>
+              <Label className="text-slate-700">ইমেইল *</Label>
               <Input
                 type="email"
                 value={userForm.email}
                 onChange={(e) => setUserForm({ ...userForm, email: e.target.value })}
-                className="bg-slate-700 border-slate-600"
+                className="bg-slate-50 border-slate-200 text-slate-800"
               />
             </div>
             <div className="space-y-2">
-              <Label>পাসওয়ার্ড *</Label>
+              <Label className="text-slate-700">পাসওয়ার্ড *</Label>
               <Input
                 type="password"
                 value={userForm.password}
                 onChange={(e) => setUserForm({ ...userForm, password: e.target.value })}
-                className="bg-slate-700 border-slate-600"
+                className="bg-slate-50 border-slate-200 text-slate-800"
               />
             </div>
             <div className="space-y-2">
-              <Label>রোল</Label>
+              <Label className="text-slate-700">রোল</Label>
               <Select
                 value={userForm.role}
                 onValueChange={(value: "owner" | "admin" | "staff") =>
                   setUserForm({ ...userForm, role: value })
                 }
               >
-                <SelectTrigger className="bg-slate-700 border-slate-600">
+                <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-800">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
+                <SelectContent className="bg-white border-slate-200">
                   <SelectItem value="staff">Staff</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
                   <SelectItem value="owner">Owner</SelectItem>
@@ -559,13 +559,13 @@ const Settings = () => {
             <div className="flex gap-3 pt-4">
               <Button
                 variant="outline"
-                className="flex-1 border-slate-600"
+                className="flex-1 border-slate-200"
                 onClick={() => setShowAddUser(false)}
               >
                 বাতিল
               </Button>
               <Button
-                className="flex-1 bg-gradient-to-r from-primary to-primary/80"
+                className="flex-1 bg-gradient-to-r from-primary to-primary/80 shadow-lg shadow-primary/20"
                 onClick={handleAddUser}
                 disabled={isSaving}
               >
@@ -578,31 +578,31 @@ const Settings = () => {
 
       {/* Edit User Dialog */}
       <Dialog open={!!editingUser} onOpenChange={() => setEditingUser(null)}>
-        <DialogContent className="bg-slate-800 border-slate-700 text-white">
+        <DialogContent className="bg-white border-slate-200 text-slate-800">
           <DialogHeader>
-            <DialogTitle>অ্যাডমিন এডিট করুন</DialogTitle>
+            <DialogTitle className="text-slate-800">অ্যাডমিন এডিট করুন</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label>নাম</Label>
+              <Label className="text-slate-700">নাম</Label>
               <Input
                 value={userForm.name}
                 onChange={(e) => setUserForm({ ...userForm, name: e.target.value })}
-                className="bg-slate-700 border-slate-600"
+                className="bg-slate-50 border-slate-200 text-slate-800"
               />
             </div>
             <div className="space-y-2">
-              <Label>রোল</Label>
+              <Label className="text-slate-700">রোল</Label>
               <Select
                 value={userForm.role}
                 onValueChange={(value: "owner" | "admin" | "staff") =>
                   setUserForm({ ...userForm, role: value })
                 }
               >
-                <SelectTrigger className="bg-slate-700 border-slate-600">
+                <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-800">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
+                <SelectContent className="bg-white border-slate-200">
                   <SelectItem value="staff">Staff</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
                   <SelectItem value="owner">Owner</SelectItem>
@@ -612,13 +612,13 @@ const Settings = () => {
             <div className="flex gap-3 pt-4">
               <Button
                 variant="outline"
-                className="flex-1 border-slate-600"
+                className="flex-1 border-slate-200"
                 onClick={() => setEditingUser(null)}
               >
                 বাতিল
               </Button>
               <Button
-                className="flex-1 bg-gradient-to-r from-primary to-primary/80"
+                className="flex-1 bg-gradient-to-r from-primary to-primary/80 shadow-lg shadow-primary/20"
                 onClick={handleUpdateUser}
                 disabled={isSaving}
               >
@@ -631,18 +631,18 @@ const Settings = () => {
 
       {/* Delete User Dialog */}
       <AlertDialog open={!!deleteUser} onOpenChange={() => setDeleteUser(null)}>
-        <AlertDialogContent className="bg-slate-800 border-slate-700 text-white">
+        <AlertDialogContent className="bg-white border-slate-200 text-slate-800">
           <AlertDialogHeader>
-            <AlertDialogTitle>অ্যাডমিন মুছে ফেলবেন?</AlertDialogTitle>
-            <AlertDialogDescription className="text-slate-400">
+            <AlertDialogTitle className="text-slate-800">অ্যাডমিন মুছে ফেলবেন?</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-500">
               "{deleteUser?.name}" মুছে ফেললে আর ফেরত আনা যাবে না।
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-slate-600 hover:bg-slate-700">
+            <AlertDialogCancel className="border-slate-200 hover:bg-slate-50">
               বাতিল
             </AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteUser} className="bg-red-500 hover:bg-red-600">
+            <AlertDialogAction onClick={handleDeleteUser} className="bg-red-500 hover:bg-red-600 text-white">
               মুছে ফেলুন
             </AlertDialogAction>
           </AlertDialogFooter>

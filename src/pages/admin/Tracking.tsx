@@ -161,15 +161,15 @@ const Tracking = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "picked":
-        return "bg-blue-500/20 text-blue-400";
+        return "bg-blue-100 text-blue-700";
       case "in_transit":
-        return "bg-purple-500/20 text-purple-400";
+        return "bg-purple-100 text-purple-700";
       case "delivered":
-        return "bg-green-500/20 text-green-400";
+        return "bg-green-100 text-green-700";
       case "returned":
-        return "bg-red-500/20 text-red-400";
+        return "bg-red-100 text-red-700";
       default:
-        return "bg-slate-500/20 text-slate-400";
+        return "bg-slate-100 text-slate-700";
     }
   };
 
@@ -184,8 +184,8 @@ const Tracking = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold text-white">ট্র্যাকিং</h1>
-        <p className="text-slate-400 mt-1">অর্ডার ট্র্যাকিং ম্যানেজ করুন</p>
+        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">ট্র্যাকিং</h1>
+        <p className="text-slate-500 mt-1">অর্ডার ট্র্যাকিং ম্যানেজ করুন</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -197,7 +197,7 @@ const Tracking = () => {
               placeholder="অর্ডার আইডি বা ট্র্যাকিং আইডি..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 bg-slate-800 border-slate-700 text-white"
+              className="pl-10 bg-white border-slate-200 text-slate-800"
             />
           </div>
 

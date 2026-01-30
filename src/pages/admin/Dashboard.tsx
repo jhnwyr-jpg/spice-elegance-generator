@@ -16,16 +16,12 @@ import {
   Users,
   Clock,
   Package,
-  Truck,
   CheckCircle2,
   XCircle,
   ArrowUpRight,
-  ArrowDownRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -78,14 +74,12 @@ const Dashboard = () => {
   const fetchDashboardData = async () => {
     setIsLoading(true);
 
-    // Get total sales (only delivered orders)
     const { data: deliveredOrders } = await supabase
       .from("orders")
       .select("total")
       .eq("order_status", "delivered");
     const totalSales = deliveredOrders?.reduce((sum, o) => sum + Number(o.total), 0) || 0;
 
-    // Get order counts by status
     const { count: totalOrders } = await supabase
       .from("orders")
       .select("*", { count: "exact", head: true });
@@ -110,14 +104,12 @@ const Dashboard = () => {
       .select("*", { count: "exact", head: true })
       .eq("order_status", "cancelled");
 
-    // Get new customers this month
     const monthStart = startOfMonth(new Date()).toISOString();
     const { count: newCustomers } = await supabase
       .from("customers")
       .select("*", { count: "exact", head: true })
       .gte("created_at", monthStart);
 
-    // Get recent orders
     const { data: recent } = await supabase
       .from("orders")
       .select("id, order_id, customer_name, total, order_status, created_at")
@@ -149,14 +141,12 @@ const Dashboard = () => {
       .gte("created_at", startDate)
       .order("created_at", { ascending: true });
 
-    // Group by date
     const grouped: Record<string, number> = {};
     data?.forEach((order) => {
       const date = format(new Date(order.created_at), "yyyy-MM-dd");
       grouped[date] = (grouped[date] || 0) + Number(order.total);
     });
 
-    // Fill in missing dates
     const chartData = [];
     for (let i = days - 1; i >= 0; i--) {
       const date = format(subDays(new Date(), i), "yyyy-MM-dd");
@@ -172,34 +162,28 @@ const Dashboard = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-500/20 text-yellow-400";
+        return "bg-yellow-100 text-yellow-700 border-yellow-200";
       case "processing":
-        return "bg-blue-500/20 text-blue-400";
+        return "bg-blue-100 text-blue-700 border-blue-200";
       case "shipped":
-        return "bg-purple-500/20 text-purple-400";
+        return "bg-purple-100 text-purple-700 border-purple-200";
       case "delivered":
-        return "bg-green-500/20 text-green-400";
+        return "bg-green-100 text-green-700 border-green-200";
       case "cancelled":
-        return "bg-red-500/20 text-red-400";
+        return "bg-red-100 text-red-700 border-red-200";
       default:
-        return "bg-slate-500/20 text-slate-400";
+        return "bg-slate-100 text-slate-700 border-slate-200";
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "pending":
-        return "পেন্ডিং";
-      case "processing":
-        return "প্রসেসিং";
-      case "shipped":
-        return "শিপড";
-      case "delivered":
-        return "ডেলিভারড";
-      case "cancelled":
-        return "বাতিল";
-      default:
-        return status;
+      case "pending": return "পেন্ডিং";
+      case "processing": return "প্রসেসিং";
+      case "shipped": return "শিপড";
+      case "delivered": return "ডেলিভারড";
+      case "cancelled": return "বাতিল";
+      default: return status;
     }
   };
 
@@ -209,6 +193,7 @@ const Dashboard = () => {
       value: `৳${stats.totalSales.toLocaleString()}`,
       icon: TrendingUp,
       color: "from-green-500 to-emerald-600",
+      bgColor: "bg-green-50",
       subtitle: "শুধুমাত্র ডেলিভারড অর্ডার",
     },
     {
@@ -216,6 +201,7 @@ const Dashboard = () => {
       value: stats.totalOrders,
       icon: ShoppingCart,
       color: "from-blue-500 to-cyan-600",
+      bgColor: "bg-blue-50",
       subtitle: "সকল অর্ডার",
     },
     {
@@ -223,6 +209,7 @@ const Dashboard = () => {
       value: stats.newCustomers,
       icon: Users,
       color: "from-purple-500 to-pink-600",
+      bgColor: "bg-purple-50",
       subtitle: "এই মাসে",
     },
     {
@@ -230,15 +217,16 @@ const Dashboard = () => {
       value: stats.pendingOrders,
       icon: Clock,
       color: "from-yellow-500 to-orange-600",
+      bgColor: "bg-yellow-50",
       subtitle: "প্রক্রিয়াধীন",
     },
   ];
 
   const orderStatusCards = [
-    { label: "পেন্ডিং", count: stats.pendingOrders, icon: Clock, color: "text-yellow-400" },
-    { label: "প্রসেসিং", count: stats.processingOrders, icon: Package, color: "text-blue-400" },
-    { label: "ডেলিভারড", count: stats.deliveredOrders, icon: CheckCircle2, color: "text-green-400" },
-    { label: "বাতিল", count: stats.cancelledOrders, icon: XCircle, color: "text-red-400" },
+    { label: "পেন্ডিং", count: stats.pendingOrders, icon: Clock, color: "text-yellow-600", bgColor: "bg-yellow-50" },
+    { label: "প্রসেসিং", count: stats.processingOrders, icon: Package, color: "text-blue-600", bgColor: "bg-blue-50" },
+    { label: "ডেলিভারড", count: stats.deliveredOrders, icon: CheckCircle2, color: "text-green-600", bgColor: "bg-green-50" },
+    { label: "বাতিল", count: stats.cancelledOrders, icon: XCircle, color: "text-red-600", bgColor: "bg-red-50" },
   ];
 
   return (
@@ -246,14 +234,14 @@ const Dashboard = () => {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-white">ড্যাশবোর্ড</h1>
-          <p className="text-slate-400 mt-1">আপনার ব্যবসার সারসংক্ষেপ</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">ড্যাশবোর্ড</h1>
+          <p className="text-slate-500 mt-1">আপনার ব্যবসার সারসংক্ষেপ</p>
         </div>
         <Select value={dateRange} onValueChange={setDateRange}>
-          <SelectTrigger className="w-40 bg-slate-800 border-slate-700 text-white">
+          <SelectTrigger className="w-40 bg-white border-slate-200 text-slate-800">
             <SelectValue placeholder="সময়কাল" />
           </SelectTrigger>
-          <SelectContent className="bg-slate-800 border-slate-700">
+          <SelectContent className="bg-white border-slate-200">
             <SelectItem value="7days">গত ৭ দিন</SelectItem>
             <SelectItem value="30days">গত ৩০ দিন</SelectItem>
             <SelectItem value="6months">গত ৬ মাস</SelectItem>
@@ -269,13 +257,13 @@ const Dashboard = () => {
           return (
             <Card
               key={index}
-              className="bg-slate-800/50 border-slate-700 overflow-hidden group hover:border-slate-600 transition-all duration-300"
+              className={`${stat.bgColor} border-slate-200 overflow-hidden group hover:shadow-lg transition-all duration-300`}
             >
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-slate-400 text-sm font-medium">{stat.title}</p>
-                    <h3 className="text-2xl lg:text-3xl font-bold text-white mt-2">{stat.value}</h3>
+                    <p className="text-slate-600 text-sm font-medium">{stat.title}</p>
+                    <h3 className="text-2xl lg:text-3xl font-bold text-slate-800 mt-2">{stat.value}</h3>
                     <p className="text-xs text-slate-500 mt-1">{stat.subtitle}</p>
                   </div>
                   <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} shadow-lg`}>
@@ -289,9 +277,9 @@ const Dashboard = () => {
       </div>
 
       {/* Order Status Summary */}
-      <Card className="bg-slate-800/50 border-slate-700">
+      <Card className="bg-white border-slate-200 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-white">অর্ডার স্ট্যাটাস</CardTitle>
+          <CardTitle className="text-slate-800">অর্ডার স্ট্যাটাস</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -300,12 +288,12 @@ const Dashboard = () => {
               return (
                 <div
                   key={index}
-                  className="flex items-center gap-4 p-4 bg-slate-700/30 rounded-xl hover:bg-slate-700/50 transition-colors"
+                  className={`flex items-center gap-4 p-4 ${item.bgColor} rounded-xl hover:shadow-md transition-all`}
                 >
                   <Icon className={`w-8 h-8 ${item.color}`} />
                   <div>
-                    <p className="text-2xl font-bold text-white">{item.count}</p>
-                    <p className="text-sm text-slate-400">{item.label}</p>
+                    <p className="text-2xl font-bold text-slate-800">{item.count}</p>
+                    <p className="text-sm text-slate-500">{item.label}</p>
                   </div>
                 </div>
               );
@@ -315,11 +303,11 @@ const Dashboard = () => {
       </Card>
 
       {/* Sales Chart */}
-      <Card className="bg-slate-800/50 border-slate-700">
+      <Card className="bg-white border-slate-200 shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-white">বিক্রি রিপোর্ট</CardTitle>
+          <CardTitle className="text-slate-800">বিক্রি রিপোর্ট</CardTitle>
           <Link to="/admin/reports">
-            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
+            <Button variant="ghost" size="sm" className="text-slate-500 hover:text-slate-800">
               বিস্তারিত দেখুন
               <ArrowUpRight className="w-4 h-4 ml-1" />
             </Button>
@@ -335,15 +323,16 @@ const Dashboard = () => {
                     <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} />
-                <YAxis stroke="#94a3b8" fontSize={12} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="date" stroke="#64748b" fontSize={12} />
+                <YAxis stroke="#64748b" fontSize={12} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#1e293b",
-                    border: "1px solid #334155",
+                    backgroundColor: "#fff",
+                    border: "1px solid #e2e8f0",
                     borderRadius: "8px",
-                    color: "#fff",
+                    color: "#1e293b",
+                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
                   }}
                   formatter={(value: number) => [`৳${value.toLocaleString()}`, "বিক্রি"]}
                 />
@@ -361,11 +350,11 @@ const Dashboard = () => {
       </Card>
 
       {/* Recent Orders */}
-      <Card className="bg-slate-800/50 border-slate-700">
+      <Card className="bg-white border-slate-200 shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-white">সাম্প্রতিক অর্ডার</CardTitle>
+          <CardTitle className="text-slate-800">সাম্প্রতিক অর্ডার</CardTitle>
           <Link to="/admin/orders">
-            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
+            <Button variant="ghost" size="sm" className="text-slate-500 hover:text-slate-800">
               সব দেখুন
               <ArrowUpRight className="w-4 h-4 ml-1" />
             </Button>
@@ -375,19 +364,19 @@ const Dashboard = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-700">
-                  <th className="text-left py-3 px-4 text-slate-400 font-medium text-sm">অর্ডার আইডি</th>
-                  <th className="text-left py-3 px-4 text-slate-400 font-medium text-sm">গ্রাহক</th>
-                  <th className="text-left py-3 px-4 text-slate-400 font-medium text-sm">মোট</th>
-                  <th className="text-left py-3 px-4 text-slate-400 font-medium text-sm">স্ট্যাটাস</th>
-                  <th className="text-left py-3 px-4 text-slate-400 font-medium text-sm">তারিখ</th>
+                <tr className="border-b border-slate-200">
+                  <th className="text-left py-3 px-4 text-slate-500 font-medium text-sm">অর্ডার আইডি</th>
+                  <th className="text-left py-3 px-4 text-slate-500 font-medium text-sm">গ্রাহক</th>
+                  <th className="text-left py-3 px-4 text-slate-500 font-medium text-sm">মোট</th>
+                  <th className="text-left py-3 px-4 text-slate-500 font-medium text-sm">স্ট্যাটাস</th>
+                  <th className="text-left py-3 px-4 text-slate-500 font-medium text-sm">তারিখ</th>
                 </tr>
               </thead>
               <tbody>
                 {recentOrders.map((order) => (
                   <tr
                     key={order.id}
-                    className="border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors"
+                    className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
                   >
                     <td className="py-3 px-4">
                       <Link
@@ -397,14 +386,14 @@ const Dashboard = () => {
                         {order.order_id}
                       </Link>
                     </td>
-                    <td className="py-3 px-4 text-white">{order.customer_name}</td>
-                    <td className="py-3 px-4 text-white font-medium">৳{Number(order.total).toLocaleString()}</td>
+                    <td className="py-3 px-4 text-slate-700">{order.customer_name}</td>
+                    <td className="py-3 px-4 text-slate-800 font-medium">৳{Number(order.total).toLocaleString()}</td>
                     <td className="py-3 px-4">
                       <Badge className={getStatusColor(order.order_status)}>
                         {getStatusLabel(order.order_status)}
                       </Badge>
                     </td>
-                    <td className="py-3 px-4 text-slate-400 text-sm">
+                    <td className="py-3 px-4 text-slate-500 text-sm">
                       {format(new Date(order.created_at), "dd MMM yyyy")}
                     </td>
                   </tr>

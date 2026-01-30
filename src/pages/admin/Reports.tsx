@@ -216,15 +216,15 @@ const Reports = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-white">রিপোর্ট</h1>
-          <p className="text-slate-400 mt-1">বিক্রি ও পারফরম্যান্স রিপোর্ট</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">রিপোর্ট</h1>
+          <p className="text-slate-500 mt-1">বিক্রি ও পারফরম্যান্স রিপোর্ট</p>
         </div>
         <div className="flex gap-3">
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="w-40 bg-slate-800 border-slate-700 text-white">
+            <SelectTrigger className="w-40 bg-white border-slate-200 text-slate-800">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-slate-800 border-slate-700">
+            <SelectContent className="bg-white border-slate-200">
               <SelectItem value="7days">গত ৭ দিন</SelectItem>
               <SelectItem value="30days">গত ৩০ দিন</SelectItem>
               <SelectItem value="6months">গত ৬ মাস</SelectItem>
@@ -233,7 +233,7 @@ const Reports = () => {
           </Select>
           <Button
             variant="outline"
-            className="border-slate-700 text-slate-300 hover:bg-slate-700"
+            className="border-slate-200 text-slate-600 hover:bg-slate-50"
             onClick={exportCSV}
           >
             <Download className="w-4 h-4 mr-2" />

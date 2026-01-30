@@ -27,7 +27,6 @@ const Login = () => {
   const checkExistingSession = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-      // Verify if user is admin
       const isAdmin = await verifyAdminRole(session.access_token);
       if (isAdmin) {
         navigate("/admin/dashboard");
@@ -37,16 +36,13 @@ const Login = () => {
 
   const checkExistingOwner = async () => {
     try {
-      // Check if any owner exists by trying to call setup-owner with GET (it will tell us)
       const { data, error } = await supabase
         .from("user_roles")
         .select("id")
         .eq("role", "owner")
         .limit(1);
       
-      // If we can't query (RLS), check via edge function
       if (error) {
-        // Assume owner exists for security
         setHasOwner(true);
       } else {
         setHasOwner(data && data.length > 0);
@@ -92,7 +88,6 @@ const Login = () => {
       }
 
       if (data.session) {
-        // Verify admin role server-side
         const isAdmin = await verifyAdminRole(data.session.access_token);
         
         if (!isAdmin) {
@@ -155,7 +150,7 @@ const Login = () => {
 
   if (isCheckingOwner) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center p-4">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
@@ -164,16 +159,16 @@ const Login = () => {
   // Show owner setup if no owner exists
   if (!hasOwner || showSetup) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          <Card className="border-slate-700 bg-slate-800/50 backdrop-blur-lg shadow-2xl">
+          <Card className="border-amber-200 bg-white shadow-2xl shadow-amber-100/50">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <div className="mx-auto w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-200">
                 <Crown className="w-8 h-8 text-white" />
               </div>
               <div>
-                <CardTitle className="text-2xl font-bold text-white">Owner Setup</CardTitle>
-                <CardDescription className="text-slate-400">
+                <CardTitle className="text-2xl font-bold text-slate-800">Owner Setup</CardTitle>
+                <CardDescription className="text-slate-500">
                   প্রথম Owner অ্যাকাউন্ট তৈরি করুন
                 </CardDescription>
               </div>
@@ -181,31 +176,31 @@ const Login = () => {
             <CardContent>
               <form onSubmit={handleSetupOwner} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-slate-300">নাম</Label>
+                  <Label htmlFor="name" className="text-slate-700">নাম</Label>
                   <Input
                     id="name"
                     type="text"
                     placeholder="আপনার নাম"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-amber-500 focus:ring-amber-500"
+                    className="bg-slate-50 border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-amber-500 focus:ring-amber-500"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-slate-300">ইমেইল</Label>
+                  <Label htmlFor="email" className="text-slate-700">ইমেইল</Label>
                   <Input
                     id="email"
                     type="email"
                     placeholder="owner@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-amber-500 focus:ring-amber-500"
+                    className="bg-slate-50 border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-amber-500 focus:ring-amber-500"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-slate-300">পাসওয়ার্ড (কমপক্ষে ৮ অক্ষর)</Label>
+                  <Label htmlFor="password" className="text-slate-700">পাসওয়ার্ড (কমপক্ষে ৮ অক্ষর)</Label>
                   <div className="relative">
                     <Input
                       id="password"
@@ -213,14 +208,14 @@ const Login = () => {
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-amber-500 focus:ring-amber-500 pr-10"
+                      className="bg-slate-50 border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-amber-500 focus:ring-amber-500 pr-10"
                       required
                       minLength={8}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -229,7 +224,7 @@ const Login = () => {
                 <div className="space-y-3 pt-2">
                   <Button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold py-2.5"
+                    className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold py-2.5 shadow-lg shadow-amber-200"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -246,7 +241,7 @@ const Login = () => {
                       type="button"
                       variant="outline"
                       onClick={() => setShowSetup(false)}
-                      className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+                      className="w-full border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800"
                     >
                       লগইনে ফিরে যান
                     </Button>
@@ -261,16 +256,16 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <Card className="border-slate-700 bg-slate-800/50 backdrop-blur-lg shadow-2xl">
+        <Card className="border-slate-200 bg-white shadow-2xl shadow-slate-200/50">
           <CardHeader className="text-center space-y-4">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/60 rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
               <ShieldCheck className="w-8 h-8 text-white" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold text-white">Admin Panel</CardTitle>
-              <CardDescription className="text-slate-400">
+              <CardTitle className="text-2xl font-bold text-slate-800">Admin Panel</CardTitle>
+              <CardDescription className="text-slate-500">
                 UR Media - এডমিন প্যানেলে স্বাগতম
               </CardDescription>
             </div>
@@ -278,19 +273,19 @@ const Login = () => {
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-slate-300">ইমেইল</Label>
+                <Label htmlFor="email" className="text-slate-700">ইমেইল</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="admin@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-primary focus:ring-primary"
+                  className="bg-slate-50 border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-primary focus:ring-primary"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-slate-300">পাসওয়ার্ড</Label>
+                <Label htmlFor="password" className="text-slate-700">পাসওয়ার্ড</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -298,13 +293,13 @@ const Login = () => {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500 focus:border-primary focus:ring-primary pr-10"
+                    className="bg-slate-50 border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-primary focus:ring-primary pr-10"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -313,7 +308,7 @@ const Login = () => {
               <div className="space-y-3 pt-2">
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-semibold py-2.5"
+                  className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-white font-semibold py-2.5 shadow-lg shadow-primary/20"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -327,7 +322,7 @@ const Login = () => {
                 </Button>
               </div>
             </form>
-            <p className="text-center text-slate-500 text-sm mt-6">
+            <p className="text-center text-slate-400 text-sm mt-6">
               শুধুমাত্র অনুমোদিত অ্যাডমিনরা লগইন করতে পারবেন
             </p>
           </CardContent>
