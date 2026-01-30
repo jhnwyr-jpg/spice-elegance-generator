@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -142,7 +143,7 @@ const Settings = () => {
     setIsSaving(true);
     const { error } = await supabase
       .from("settings")
-      .update({ value: deliveryCharges as unknown as Record<string, unknown> })
+      .update({ value: deliveryCharges as unknown as Json })
       .eq("key", "delivery_charges");
 
     if (error) {
@@ -157,7 +158,7 @@ const Settings = () => {
     setIsSaving(true);
     const { error } = await supabase
       .from("settings")
-      .update({ value: storeInfo as unknown as Record<string, unknown> })
+      .update({ value: storeInfo as unknown as Json })
       .eq("key", "store_info");
 
     if (error) {
