@@ -199,30 +199,30 @@ const Products = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-white">প্রোডাক্ট</h1>
-          <p className="text-slate-400 mt-1">সকল প্রোডাক্ট ম্যানেজ করুন</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">প্রোডাক্ট</h1>
+          <p className="text-slate-500 mt-1">সকল প্রোডাক্ট ম্যানেজ করুন</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
-              className="bg-gradient-to-r from-primary to-primary/80"
+              className="bg-gradient-to-r from-primary to-primary/80 shadow-lg shadow-primary/20"
               onClick={() => closeDialog()}
             >
               <Plus className="w-4 h-4 mr-2" />
               নতুন প্রোডাক্ট
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-slate-800 border-slate-700 text-white max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogContent className="bg-white border-slate-200 text-slate-800 max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingProduct ? "প্রোডাক্ট এডিট করুন" : "নতুন প্রোডাক্ট যোগ করুন"}</DialogTitle>
+              <DialogTitle className="text-slate-800">{editingProduct ? "প্রোডাক্ট এডিট করুন" : "নতুন প্রোডাক্ট যোগ করুন"}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4 mt-4">
               <div className="space-y-2">
-                <Label>নাম *</Label>
+                <Label className="text-slate-700">নাম *</Label>
                 <Input
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="bg-slate-700 border-slate-600"
+                  className="bg-slate-50 border-slate-200 text-slate-800"
                   required
                 />
               </div>

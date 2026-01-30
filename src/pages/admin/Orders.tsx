@@ -103,17 +103,17 @@ const Orders = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+        return "bg-yellow-100 text-yellow-700 border-yellow-200";
       case "processing":
-        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+        return "bg-blue-100 text-blue-700 border-blue-200";
       case "shipped":
-        return "bg-purple-500/20 text-purple-400 border-purple-500/30";
+        return "bg-purple-100 text-purple-700 border-purple-200";
       case "delivered":
-        return "bg-green-500/20 text-green-400 border-green-500/30";
+        return "bg-green-100 text-green-700 border-green-200";
       case "cancelled":
-        return "bg-red-500/20 text-red-400 border-red-500/30";
+        return "bg-red-100 text-red-700 border-red-200";
       default:
-        return "bg-slate-500/20 text-slate-400 border-slate-500/30";
+        return "bg-slate-100 text-slate-700 border-slate-200";
     }
   };
 
@@ -136,8 +136,8 @@ const Orders = () => {
 
   const getPaymentStatusColor = (status: string) => {
     return status === "paid"
-      ? "bg-green-500/20 text-green-400 border-green-500/30"
-      : "bg-orange-500/20 text-orange-400 border-orange-500/30";
+      ? "bg-green-100 text-green-700 border-green-200"
+      : "bg-orange-100 text-orange-700 border-orange-200";
   };
 
   const filteredOrders = orders.filter((order) => {
@@ -154,8 +154,8 @@ const Orders = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold text-white">অর্ডার</h1>
-        <p className="text-slate-400 mt-1">সকল অর্ডার ম্যানেজ করুন</p>
+        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">অর্ডার</h1>
+        <p className="text-slate-500 mt-1">সকল অর্ডার ম্যানেজ করুন</p>
       </div>
 
       {/* Filters */}
@@ -166,15 +166,15 @@ const Orders = () => {
             placeholder="অর্ডার আইডি, নাম বা ফোন দিয়ে খুঁজুন..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 bg-slate-800 border-slate-700 text-white"
+            className="pl-10 bg-white border-slate-200 text-slate-800"
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-full sm:w-40 bg-slate-800 border-slate-700 text-white">
+          <SelectTrigger className="w-full sm:w-40 bg-white border-slate-200 text-slate-800">
             <Filter className="w-4 h-4 mr-2" />
             <SelectValue placeholder="স্ট্যাটাস" />
           </SelectTrigger>
-          <SelectContent className="bg-slate-800 border-slate-700">
+          <SelectContent className="bg-white border-slate-200">
             <SelectItem value="all">সব স্ট্যাটাস</SelectItem>
             <SelectItem value="pending">পেন্ডিং</SelectItem>
             <SelectItem value="processing">প্রসেসিং</SelectItem>
@@ -184,10 +184,10 @@ const Orders = () => {
           </SelectContent>
         </Select>
         <Select value={paymentFilter} onValueChange={setPaymentFilter}>
-          <SelectTrigger className="w-full sm:w-40 bg-slate-800 border-slate-700 text-white">
+          <SelectTrigger className="w-full sm:w-40 bg-white border-slate-200 text-slate-800">
             <SelectValue placeholder="পেমেন্ট" />
           </SelectTrigger>
-          <SelectContent className="bg-slate-800 border-slate-700">
+          <SelectContent className="bg-white border-slate-200">
             <SelectItem value="all">সব পেমেন্ট</SelectItem>
             <SelectItem value="paid">পেইড</SelectItem>
             <SelectItem value="unpaid">আনপেইড</SelectItem>

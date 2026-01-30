@@ -97,17 +97,17 @@ const Customers = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
-        return "text-yellow-400";
+        return "text-yellow-600";
       case "processing":
-        return "text-blue-400";
+        return "text-blue-600";
       case "shipped":
-        return "text-purple-400";
+        return "text-purple-600";
       case "delivered":
-        return "text-green-400";
+        return "text-green-600";
       case "cancelled":
-        return "text-red-400";
+        return "text-red-600";
       default:
-        return "text-slate-400";
+        return "text-slate-600";
     }
   };
 
@@ -138,8 +138,8 @@ const Customers = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl lg:text-3xl font-bold text-white">কাস্টমার</h1>
-        <p className="text-slate-400 mt-1">সকল গ্রাহকের তালিকা</p>
+        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">কাস্টমার</h1>
+        <p className="text-slate-500 mt-1">সকল গ্রাহকের তালিকা</p>
       </div>
 
       {/* Search */}
@@ -149,7 +149,7 @@ const Customers = () => {
           placeholder="নাম বা ফোন দিয়ে খুঁজুন..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-10 bg-slate-800 border-slate-700 text-white"
+          className="pl-10 bg-white border-slate-200 text-slate-800"
         />
       </div>
 
@@ -159,48 +159,48 @@ const Customers = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : filteredCustomers.length === 0 ? (
-        <Card className="bg-slate-800/50 border-slate-700">
+        <Card className="bg-white border-slate-200 shadow-sm">
           <CardContent className="py-12 text-center">
-            <Users className="w-12 h-12 text-slate-500 mx-auto mb-4" />
-            <p className="text-slate-400">কোনো গ্রাহক নেই</p>
+            <Users className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+            <p className="text-slate-500">কোনো গ্রাহক নেই</p>
           </CardContent>
         </Card>
       ) : (
-        <Card className="bg-slate-800/50 border-slate-700 overflow-hidden">
+        <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-slate-700 hover:bg-transparent">
-                  <TableHead className="text-slate-400">নাম</TableHead>
-                  <TableHead className="text-slate-400">ফোন</TableHead>
-                  <TableHead className="text-slate-400">ঠিকানা</TableHead>
-                  <TableHead className="text-slate-400">মোট অর্ডার</TableHead>
-                  <TableHead className="text-slate-400">যোগদান</TableHead>
-                  <TableHead className="text-slate-400 text-right">অ্যাকশন</TableHead>
+                <TableRow className="border-slate-200 hover:bg-transparent">
+                  <TableHead className="text-slate-500">নাম</TableHead>
+                  <TableHead className="text-slate-500">ফোন</TableHead>
+                  <TableHead className="text-slate-500">ঠিকানা</TableHead>
+                  <TableHead className="text-slate-500">মোট অর্ডার</TableHead>
+                  <TableHead className="text-slate-500">যোগদান</TableHead>
+                  <TableHead className="text-slate-500 text-right">অ্যাকশন</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredCustomers.map((customer) => (
                   <TableRow
                     key={customer.id}
-                    className="border-slate-700/50 hover:bg-slate-700/30"
+                    className="border-slate-100 hover:bg-slate-50"
                   >
-                    <TableCell className="text-white font-medium">{customer.name}</TableCell>
-                    <TableCell className="text-slate-300">{customer.phone}</TableCell>
-                    <TableCell className="text-slate-300 max-w-[200px] truncate">
+                    <TableCell className="text-slate-800 font-medium">{customer.name}</TableCell>
+                    <TableCell className="text-slate-600">{customer.phone}</TableCell>
+                    <TableCell className="text-slate-600 max-w-[200px] truncate">
                       {customer.address || "-"}
                     </TableCell>
                     <TableCell>
                       <span className="text-primary font-medium">{customer.total_orders}</span>
                     </TableCell>
-                    <TableCell className="text-slate-400 text-sm">
+                    <TableCell className="text-slate-500 text-sm">
                       {format(new Date(customer.created_at), "dd MMM yyyy")}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="text-slate-400 hover:text-white"
+                        className="text-slate-500 hover:text-slate-800"
                         onClick={() => handleViewCustomer(customer)}
                       >
                         <Eye className="w-4 h-4" />
@@ -216,7 +216,7 @@ const Customers = () => {
 
       {/* Customer Details Dialog */}
       <Dialog open={!!selectedCustomer} onOpenChange={() => setSelectedCustomer(null)}>
-        <DialogContent className="bg-slate-800 border-slate-700 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="bg-white border-slate-200 text-slate-800 max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>গ্রাহক বিস্তারিত</DialogTitle>
           </DialogHeader>

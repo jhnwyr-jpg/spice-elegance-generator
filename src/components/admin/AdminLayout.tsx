@@ -114,7 +114,6 @@ const AdminLayout = () => {
     };
     fetchPendingOrders();
 
-    // Subscribe to new orders
     const channel = supabase
       .channel("orders-changes")
       .on(
@@ -125,7 +124,6 @@ const AdminLayout = () => {
           toast.success("নতুন অর্ডার এসেছে!", {
             description: `অর্ডার আইডি: ${payload.new.order_id}`,
           });
-          // Play notification sound
           const audio = new Audio("/notification.mp3");
           audio.play().catch(() => {});
         }
@@ -146,11 +144,11 @@ const AdminLayout = () => {
   const getRoleBadge = (role: string | null) => {
     switch (role) {
       case "owner":
-        return <Badge className="bg-amber-500/20 text-amber-400 text-xs">Owner</Badge>;
+        return <Badge className="bg-amber-100 text-amber-700 text-xs border-amber-200">Owner</Badge>;
       case "admin":
-        return <Badge className="bg-blue-500/20 text-blue-400 text-xs">Admin</Badge>;
+        return <Badge className="bg-blue-100 text-blue-700 text-xs border-blue-200">Admin</Badge>;
       case "staff":
-        return <Badge className="bg-green-500/20 text-green-400 text-xs">Staff</Badge>;
+        return <Badge className="bg-green-100 text-green-700 text-xs border-green-200">Staff</Badge>;
       default:
         return null;
     }
@@ -158,10 +156,10 @@ const AdminLayout = () => {
 
   if (isVerifying) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
-          <p className="text-slate-400 mt-4">অ্যাডমিন যাচাই হচ্ছে...</p>
+          <p className="text-slate-500 mt-4">অ্যাডমিন যাচাই হচ্ছে...</p>
         </div>
       </div>
     );
@@ -179,23 +177,23 @@ const AdminLayout = () => {
   });
 
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
+    <div className="min-h-screen bg-slate-50 text-slate-800">
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-slate-800 border-b border-slate-700 z-50 flex items-center justify-between px-4">
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 z-50 flex items-center justify-between px-4 shadow-sm">
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+          className="p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-600"
         >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
         <div className="flex items-center gap-2">
           <Shield className="w-5 h-5 text-primary" />
-          <span className="font-bold text-lg">Admin Panel</span>
+          <span className="font-bold text-lg text-slate-800">Admin Panel</span>
         </div>
-        <button className="relative p-2 hover:bg-slate-700 rounded-lg transition-colors">
+        <button className="relative p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-600">
           <Bell className="w-5 h-5" />
           {pendingCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-red-500 text-xs">
+            <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-red-500 text-white text-xs">
               {pendingCount}
             </Badge>
           )}
@@ -205,24 +203,24 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 h-full bg-slate-800 border-r border-slate-700 z-40 transition-all duration-300",
+          "fixed left-0 top-0 h-full bg-white border-r border-slate-200 z-40 transition-all duration-300 shadow-sm",
           sidebarOpen ? "w-64" : "w-20",
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-700">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200">
           {sidebarOpen && (
             <div className="flex items-center gap-2">
               <Shield className="w-6 h-6 text-primary" />
-              <span className="font-bold text-xl bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent">
+              <span className="font-bold text-xl bg-gradient-to-r from-primary to-amber-500 bg-clip-text text-transparent">
                 UR Media
               </span>
             </div>
           )}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="hidden lg:flex p-2 hover:bg-slate-700 rounded-lg transition-colors"
+            className="hidden lg:flex p-2 hover:bg-slate-100 rounded-lg transition-colors text-slate-600"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -242,7 +240,7 @@ const AdminLayout = () => {
                   "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
                   isActive
                     ? "bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg shadow-primary/20"
-                    : "hover:bg-slate-700/50 text-slate-300 hover:text-white"
+                    : "hover:bg-slate-100 text-slate-600 hover:text-slate-800"
                 )}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
@@ -258,17 +256,17 @@ const AdminLayout = () => {
         </nav>
 
         {/* User Section */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-700">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-200 bg-white">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-700/50 rounded-xl transition-colors">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary to-amber-400 rounded-full flex items-center justify-center text-white font-bold">
+              <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-100 rounded-xl transition-colors">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-amber-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">
                   {adminUser.email?.charAt(0).toUpperCase()}
                 </div>
                 {sidebarOpen && (
                   <>
                     <div className="flex-1 text-left">
-                      <p className="text-sm font-medium text-white truncate">{adminUser.email}</p>
+                      <p className="text-sm font-medium text-slate-800 truncate">{adminUser.email}</p>
                       {getRoleBadge(adminUser.role)}
                     </div>
                     <ChevronDown className="w-4 h-4 text-slate-400" />
@@ -276,10 +274,10 @@ const AdminLayout = () => {
                 )}
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-slate-800 border-slate-700">
+            <DropdownMenuContent align="end" className="w-48 bg-white border-slate-200">
               <DropdownMenuItem
                 onClick={handleLogout}
-                className="text-red-400 hover:text-red-300 hover:bg-slate-700 cursor-pointer"
+                className="text-red-500 hover:text-red-600 hover:bg-red-50 cursor-pointer"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 লগআউট
@@ -292,7 +290,7 @@ const AdminLayout = () => {
       {/* Mobile Overlay */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/30 z-30 lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
