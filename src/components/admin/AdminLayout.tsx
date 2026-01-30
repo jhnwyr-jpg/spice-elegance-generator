@@ -17,6 +17,7 @@ import {
   X,
   Bell,
   ChevronDown,
+  Shield,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -26,6 +27,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 
+interface AdminUser {
+  userId: string;
+  email: string;
+  role: "owner" | "admin" | "staff" | null;
+  isAdmin: boolean;
+}
+
 const navItems = [
   { path: "/admin/dashboard", label: "ড্যাশবোর্ড", icon: LayoutDashboard },
   { path: "/admin/products", label: "প্রোডাক্ট", icon: Package },
@@ -33,7 +41,7 @@ const navItems = [
   { path: "/admin/customers", label: "কাস্টমার", icon: Users },
   { path: "/admin/tracking", label: "ট্র্যাকিং", icon: Truck },
   { path: "/admin/reports", label: "রিপোর্ট", icon: BarChart3 },
-  { path: "/admin/settings", label: "সেটিংস", icon: Settings },
+  { path: "/admin/settings", label: "সেটিংস", icon: Settings, ownerOnly: true },
 ];
 
 const AdminLayout = () => {
@@ -41,20 +49,49 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
+  const [isVerifying, setIsVerifying] = useState(true);
   const [pendingCount, setPendingCount] = useState(0);
-  const [newOrderAlert, setNewOrderAlert] = useState(false);
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+    const verifyAdmin = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
         navigate("/admin/login");
         return;
       }
-      setUser(user);
+
+      try {
+        const response = await supabase.functions.invoke("verify-admin", {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+
+        if (response.error || !response.data?.isAdmin) {
+          toast.error("অ্যাডমিন অ্যাক্সেস নেই");
+          await supabase.auth.signOut();
+          navigate("/admin/login");
+          return;
+        }
+
+        setAdminUser({
+          userId: response.data.userId,
+          email: response.data.email,
+          role: response.data.role,
+          isAdmin: true,
+        });
+      } catch (error) {
+        console.error("Verification error:", error);
+        await supabase.auth.signOut();
+        navigate("/admin/login");
+      } finally {
+        setIsVerifying(false);
+      }
     };
-    getUser();
+
+    verifyAdmin();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_OUT" || !session) {
@@ -66,6 +103,8 @@ const AdminLayout = () => {
   }, [navigate]);
 
   useEffect(() => {
+    if (!adminUser) return;
+
     const fetchPendingOrders = async () => {
       const { count } = await supabase
         .from("orders")
@@ -82,7 +121,6 @@ const AdminLayout = () => {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "orders" },
         (payload) => {
-          setNewOrderAlert(true);
           setPendingCount((prev) => prev + 1);
           toast.success("নতুন অর্ডার এসেছে!", {
             description: `অর্ডার আইডি: ${payload.new.order_id}`,
@@ -97,7 +135,7 @@ const AdminLayout = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [adminUser]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -105,13 +143,40 @@ const AdminLayout = () => {
     navigate("/admin/login");
   };
 
-  if (!user) {
+  const getRoleBadge = (role: string | null) => {
+    switch (role) {
+      case "owner":
+        return <Badge className="bg-amber-500/20 text-amber-400 text-xs">Owner</Badge>;
+      case "admin":
+        return <Badge className="bg-blue-500/20 text-blue-400 text-xs">Admin</Badge>;
+      case "staff":
+        return <Badge className="bg-green-500/20 text-green-400 text-xs">Staff</Badge>;
+      default:
+        return null;
+    }
+  };
+
+  if (isVerifying) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
+          <p className="text-slate-400 mt-4">অ্যাডমিন যাচাই হচ্ছে...</p>
+        </div>
       </div>
     );
   }
+
+  if (!adminUser) {
+    return null;
+  }
+
+  const filteredNavItems = navItems.filter(item => {
+    if (item.ownerOnly && adminUser.role !== "owner") {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">
@@ -123,7 +188,10 @@ const AdminLayout = () => {
         >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
-        <span className="font-bold text-lg">UR Media Admin</span>
+        <div className="flex items-center gap-2">
+          <Shield className="w-5 h-5 text-primary" />
+          <span className="font-bold text-lg">Admin Panel</span>
+        </div>
         <button className="relative p-2 hover:bg-slate-700 rounded-lg transition-colors">
           <Bell className="w-5 h-5" />
           {pendingCount > 0 && (
@@ -145,9 +213,12 @@ const AdminLayout = () => {
         {/* Logo */}
         <div className="h-16 flex items-center justify-between px-4 border-b border-slate-700">
           {sidebarOpen && (
-            <span className="font-bold text-xl bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent">
-              UR Media
-            </span>
+            <div className="flex items-center gap-2">
+              <Shield className="w-6 h-6 text-primary" />
+              <span className="font-bold text-xl bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent">
+                UR Media
+              </span>
+            </div>
           )}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -159,7 +230,7 @@ const AdminLayout = () => {
 
         {/* Navigation */}
         <nav className="p-4 space-y-2">
-          {navItems.map((item) => {
+          {filteredNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
             return (
@@ -192,13 +263,13 @@ const AdminLayout = () => {
             <DropdownMenuTrigger asChild>
               <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-700/50 rounded-xl transition-colors">
                 <div className="w-10 h-10 bg-gradient-to-br from-primary to-amber-400 rounded-full flex items-center justify-center text-white font-bold">
-                  {user.email?.charAt(0).toUpperCase()}
+                  {adminUser.email?.charAt(0).toUpperCase()}
                 </div>
                 {sidebarOpen && (
                   <>
                     <div className="flex-1 text-left">
-                      <p className="text-sm font-medium text-white truncate">{user.email}</p>
-                      <p className="text-xs text-slate-400">Admin</p>
+                      <p className="text-sm font-medium text-white truncate">{adminUser.email}</p>
+                      {getRoleBadge(adminUser.role)}
                     </div>
                     <ChevronDown className="w-4 h-4 text-slate-400" />
                   </>
@@ -234,7 +305,7 @@ const AdminLayout = () => {
         )}
       >
         <div className="p-4 lg:p-8">
-          <Outlet />
+          <Outlet context={{ adminUser }} />
         </div>
       </main>
     </div>

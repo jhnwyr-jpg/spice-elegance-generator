@@ -175,42 +175,57 @@ const Settings = () => {
       return;
     }
 
-    setIsSaving(true);
-
-    // Create auth user
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: userForm.email,
-      password: userForm.password,
-      options: {
-        emailRedirectTo: window.location.origin,
-      },
-    });
-
-    if (authError) {
-      toast.error(authError.message);
-      setIsSaving(false);
+    if (userForm.password.length < 6) {
+      toast.error("পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে");
       return;
     }
 
-    // Add to admin_users table
-    const { error } = await supabase.from("admin_users").insert([
-      {
-        name: userForm.name,
-        email: userForm.email,
-        password_hash: "***", // We don't store actual password
-        role: userForm.role,
-      },
-    ]);
+    setIsSaving(true);
 
-    if (error) {
-      toast.error("অ্যাডমিন যোগ করতে সমস্যা হয়েছে");
-    } else {
+    try {
+      // Get current session for authorization
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("সেশন এক্সপায়ার্ড, আবার লগইন করুন");
+        setIsSaving(false);
+        return;
+      }
+
+      // Use secure edge function to create admin
+      const response = await supabase.functions.invoke("create-admin", {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: {
+          name: userForm.name,
+          email: userForm.email,
+          password: userForm.password,
+          role: userForm.role,
+        },
+      });
+
+      if (response.error) {
+        toast.error(response.error.message || "অ্যাডমিন যোগ করতে সমস্যা হয়েছে");
+        setIsSaving(false);
+        return;
+      }
+
+      if (response.data?.error) {
+        toast.error(response.data.error);
+        setIsSaving(false);
+        return;
+      }
+
       toast.success("অ্যাডমিন যোগ হয়েছে");
       fetchAdminUsers();
       setShowAddUser(false);
       setUserForm({ name: "", email: "", password: "", role: "staff" });
+    } catch (error: any) {
+      toast.error("অ্যাডমিন যোগ করতে সমস্যা হয়েছে");
+    } finally {
+      setIsSaving(false);
     }
-    setIsSaving(false);
   };
 
   const handleUpdateUser = async () => {
